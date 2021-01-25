@@ -109,13 +109,13 @@ SET(BulletRoboticsGUI_SRCS ${BulletRoboticsGUI_INCLUDES}
   ../../examples/SharedMemory/plugins/stablePDPlugin/KinTree.h
   ../../examples/SharedMemory/plugins/stablePDPlugin/BulletConversion.cpp
   ../../examples/SharedMemory/plugins/stablePDPlugin/BulletConversion.h
-	../../examples/ExampleBrowser/InProcessExampleBrowser.cpp
-	../../examples/SharedMemory/GraphicsServerExample.cpp
-	../../examples/SharedMemory/GraphicsClientExample.cpp
+  ../../examples/ExampleBrowser/InProcessExampleBrowser.cpp
+	# ../../examples/SharedMemory/GraphicsServerExample.cpp #[IGE]: disable GUI
+	# ../../examples/SharedMemory/GraphicsClientExample.cpp #[IGE]: disable GUI
 	../../examples/SharedMemory/RemoteGUIHelper.cpp
 	../../examples/SharedMemory/RemoteGUIHelperTCP.cpp
-	../../examples/SharedMemory/GraphicsServerExample.h
-	../../examples/SharedMemory/GraphicsClientExample.h
+	# ../../examples/SharedMemory/GraphicsServerExample.h #[IGE]: disable GUI
+	# ../../examples/SharedMemory/GraphicsClientExample.h #[IGE]: disable GUI
 	../../examples/SharedMemory/RemoteGUIHelper.h
 	../../examples/SharedMemory/GraphicsSharedMemoryCommands.h
 	../../examples/SharedMemory/GraphicsSharedMemoryPublic.h
@@ -196,7 +196,8 @@ ENDIF (BUILD_SHARED_LIBS)
     SET_TARGET_PROPERTIES(BulletRobotics PROPERTIES PUBLIC_HEADER "PhysicsClientC_API.h" )
   ENDIF (APPLE AND BUILD_SHARED_LIBS AND FRAMEWORK)	
 
-IF(NOT MSVC)
+ #[IGE]: fix android build
+IF(APPLE)
     CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/bullet_robotics_gui.pc.cmake
                    ${CMAKE_CURRENT_BINARY_DIR}/bullet_robotics_gui.pc @ONLY)
   	INSTALL(
@@ -205,5 +206,6 @@ IF(NOT MSVC)
       DESTINATION
       ${PKGCONFIG_INSTALL_PREFIX}
     )
-ENDIF(NOT MSVC)
+ENDIF(APPLE)
+#[/IGE]
 

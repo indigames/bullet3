@@ -1,6 +1,6 @@
 #include "InProcessExampleBrowser.h"
 
-//#define EXAMPLE_CONSOLE_ONLY
+#define EXAMPLE_CONSOLE_ONLY // [IGE]: unrem to disable GUI
 #ifdef EXAMPLE_CONSOLE_ONLY
 #include "EmptyBrowser.h"
 typedef EmptyBrowser DefaultBrowser;
@@ -124,7 +124,11 @@ static ExampleEntryPhysicsServer gDefaultExamplesPhysicsServer[] =
 								  PhysicsServerCreateFuncBullet2, PHYSICS_SERVER_ENABLE_COMMAND_LOGGING),
 		ExampleEntryPhysicsServer(1, "Physics Server (Replay Log)", "Create a physics server that replay a command log from disk.",
 								  PhysicsServerCreateFuncBullet2, PHYSICS_SERVER_REPLAY_FROM_COMMAND_LOG),
+// [IGE]: disable gui
+#ifndef EXAMPLE_CONSOLE_ONLY
 		ExampleEntryPhysicsServer(1, "Graphics Server", "Create a graphics server", GraphicsServerCreateFuncBullet),
+#endif
+// [/IGE]
 
 };
 

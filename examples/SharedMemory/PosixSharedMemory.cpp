@@ -4,7 +4,7 @@
 #include "LinearMath/btAlignedObjectArray.h"
 
 //Windows implementation is in Win32SharedMemory.cpp
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(ANDROID) // [IGE]: Fix android compile
 #define TEST_SHARED_MEMORY
 #endif  //_WIN32
 
