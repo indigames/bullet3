@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(
 		${BULLET_PHYSICS_SOURCE_DIR}/src
 		${BULLET_PHYSICS_SOURCE_DIR}/examples
 		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs
+		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/glad
 		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/enet/include
 		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/clsocket/src
 		${BULLET_PHYSICS_SOURCE_DIR}/Extras/VHACD/inc #[IGE]: add include
@@ -35,12 +36,12 @@ SET(pybullet_SRCS
 	# "${BULLET_PHYSICS_SOURCE_DIR}/src/btLinearMathAll.cpp"
 	# "${BULLET_PHYSICS_SOURCE_DIR}/src/btBulletCollisionAll.cpp"
 	# "${BULLET_PHYSICS_SOURCE_DIR}/src/btBulletDynamicsAll.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/InProcessExampleBrowser.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/geometry.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/model.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/tgaimage.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/our_gl.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/TinyRenderer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/InProcessExampleBrowser.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/geometry.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/model.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/tgaimage.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/our_gl.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/TinyRenderer.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/pdControlPlugin/pdControlPlugin.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/collisionFilterPlugin/collisionFilterPlugin.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/fileIOPlugin/fileIOPlugin.cpp"
@@ -49,12 +50,12 @@ SET(pybullet_SRCS
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/InProcessMemory.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsClient.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServer.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelperTCP.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExample.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExampleBullet2.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelperTCP.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExample.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExampleBullet2.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/SharedMemoryInProcessPhysicsC_API.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerSharedMemory.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsDirect.cpp"
@@ -65,8 +66,8 @@ SET(pybullet_SRCS
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsClientC_API.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/Win32SharedMemory.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PosixSharedMemory.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/tinyRendererPlugin/TinyRendererVisualShapeConverter.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/tinyRendererPlugin/tinyRendererPlugin.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/tinyRendererPlugin/TinyRendererVisualShapeConverter.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/tinyRendererPlugin/tinyRendererPlugin.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsClientUDP.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsClientUDP_C_API.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsClientTCP.cpp"
@@ -118,27 +119,27 @@ SET(pybullet_SRCS
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/enet/packet.c"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/enet/peer.c"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/enet/protocol.c"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/OpenGLGuiHelper.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/OpenGLExampleBrowser.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/CollisionShape2TriangleMesh.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GL_ShapeDrawer.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleOpenGL2Renderer.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLInstancingRenderer.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleOpenGL3App.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLPrimitiveRenderer.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/TwFonts.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLRenderToTexture.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/LoadShader.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/OpenSans.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleCamera.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/fontstash.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/OpenGLGuiHelper.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/OpenGLExampleBrowser.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/CollisionShape2TriangleMesh.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GL_ShapeDrawer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleOpenGL2Renderer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLInstancingRenderer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleOpenGL3App.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLPrimitiveRenderer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/TwFonts.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLRenderToTexture.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/LoadShader.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/OpenSans.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleCamera.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/fontstash.cpp"
 	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleOpenGL2App.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/opengl_fontstashcallbacks.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GraphingTexture.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GwenProfileWindow.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/gwenUserInterface.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GwenParameterInterface.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GwenTextureWindow.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/opengl_fontstashcallbacks.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GraphingTexture.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GwenProfileWindow.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/gwenUserInterface.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GwenParameterInterface.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/GwenGUISupport/GwenTextureWindow.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common/b3AlignedAllocator.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common/b3Logging.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common/b3Vector3.cpp"
@@ -256,19 +257,76 @@ SET(pybullet_SRCS
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/Gwen/Controls/Dialog/Query.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/Gwen/Platforms/Null.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/Gwen/Platforms/Windows.cpp"
-	# "${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/Gwen/Renderers/OpenGL_DebugFont.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/Gwen/Renderers/OpenGL_DebugFont.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/extras/VHACD/test/src/main_vhacd.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/extras/VHACD/src/VHACD.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/extras/VHACD/src/vhacdICHull.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/extras/VHACD/src/vhacdManifoldMesh.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/extras/VHACD/src/vhacdMesh.cpp"
 	"${BULLET_PHYSICS_SOURCE_DIR}/extras/VHACD/src/vhacdVolume.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/eglPlugin/eglRendererVisualShapeConverter.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/plugins/eglPlugin/eglRendererPlugin.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/Importers/ImportColladaDemo/LoadMeshFromCollada.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/Importers/ImportObjDemo/LoadMeshFromObj.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/Importers/ImportMeshUtility/b3ImportMeshUtility.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/Importers/ImportObjDemo/Wavefront2GLInstanceGraphicsShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/geometry.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/model.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/tgaimage.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/our_gl.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/TinyRenderer/TinyRenderer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/Wavefront/tiny_obj_loader.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/stb_image/stb_image.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/stb_image/stb_image_write.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/tinyxml2/tinyxml2.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/SimpleCamera.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/Utils/b3Clock.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/Utils/b3ResourcePath.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btShapeHull.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btConvexHullShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btBoxShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btSphereShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btPolyhedralConvexShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btConvexShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btCollisionShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btConvexPolyhedron.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision/CollisionShapes/btConvexInternalShape.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common/b3Logging.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath/btAlignedAllocator.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath/btConvexHull.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath/btConvexHullComputer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath/btGeometryUtil.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath/btQuickprof.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath/btThreads.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common/b3AlignedAllocator.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/glad/gl.c"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLInstancingRenderer.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/GLRenderToTexture.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/LoadShader.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/glad/egl.c"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/EGLOpenGLWindow.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/Win32Window.cpp"
+	"${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow/Win32OpenGLWindow.cpp"
+
 	#[/IGE]
 )
 
 IF(BUILD_CLSOCKET)
- ADD_DEFINITIONS(-DBT_ENABLE_CLSOCKET)
+	ADD_DEFINITIONS(-DBT_ENABLE_CLSOCKET)
 ENDIF()
+
+IF(NOT WIN32 AND NOT APPLE)
+	ADD_DEFINITIONS(-DBT_USE_EGL)
+ENDIF()
+
+ADD_DEFINITIONS(-DPYBULLET_USE_NUMPY -DBT_NO_PROFILE -DGWEN_COMPILE_STATIC -DBT_ENABLE_ENET -DEGL_ADD_PYTHON_INIT -DB3_ENABLE_FILEIO_PLUGIN -DB3_USE_ZIPFILE_FILEIO -DBT_THREADSAFE=1 -DSTATIC_LINK_SPD_PLUGIN -DBT_ENABLE_VHACD )
+
+ADD_DEFINITIONS("-DBT_USE_OPENMP=1")
+IF (MSVC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+ELSE (MSVC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+ENDIF (MSVC)
 
 IF(WIN32)
 	LINK_LIBRARIES(

@@ -20,7 +20,7 @@ IF (NOT CMAKE_BUILD_TYPE)
  SET(CMAKE_BUILD_TYPE "Release")
 ENDIF (NOT CMAKE_BUILD_TYPE)
 
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+# SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 #MESSAGE("CMAKE_CXX_FLAGS_DEBUG="+${CMAKE_CXX_FLAGS_DEBUG})
 
 OPTION(USE_DOUBLE_PRECISION "Use double precision"	OFF)
@@ -30,7 +30,7 @@ OPTION(BUILD_SHARED_LIBS "Use shared libraries" OFF)
 OPTION(USE_SOFT_BODY_MULTI_BODY_DYNAMICS_WORLD "Use btSoftMultiBodyDynamicsWorld" ON)
 OPTION(USE_OPENVR "Use OpenVR for virtual reality" OFF)
 
-OPTION(BULLET2_MULTITHREADING "Build Bullet 2 libraries with mutex locking around certain operations (required for multi-threading)" OFF)
+OPTION(BULLET2_MULTITHREADING "Build Bullet 2 libraries with mutex locking around certain operations (required for multi-threading)" ON)
 IF (BULLET2_MULTITHREADING)
     OPTION(BULLET2_USE_OPEN_MP_MULTITHREADING "Build Bullet 2 with support for multi-threading with OpenMP (requires a compiler with OpenMP support)" OFF)
     OPTION(BULLET2_USE_TBB_MULTITHREADING "Build Bullet 2 with support for multi-threading with Intel Threading Building Blocks (requires the TBB library to be already installed)" OFF)
@@ -41,28 +41,28 @@ ENDIF (BULLET2_MULTITHREADING)
 
 
 IF(NOT WIN32)
-	SET(DL ${CMAKE_DL_LIBS})
-	IF(CMAKE_SYSTEM_NAME MATCHES "Linux" OR ANDROID) #[IGE]: Android use Linux code
-		MESSAGE("Linux")
-		SET(OSDEF -D_LINUX)
-	ELSE(CMAKE_SYSTEM_NAME MATCHES "Linux")
-		IF(APPLE)
-			MESSAGE("Apple")
-			SET(OSDEF -D_DARWIN)
-		ELSE(APPLE)
-			MESSAGE("BSD?")
-			SET(OSDEF -D_BSD)
-		ENDIF(APPLE)
-	ENDIF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    SET(DL ${CMAKE_DL_LIBS})
+    IF(CMAKE_SYSTEM_NAME MATCHES "Linux" OR ANDROID) #[IGE]: Android use Linux code
+        MESSAGE("Linux")
+        SET(OSDEF -D_LINUX)
+    ELSE()
+        IF(APPLE)
+            MESSAGE("Apple")
+            SET(OSDEF -D_DARWIN)
+        ELSE(APPLE)
+            MESSAGE("BSD?")
+            SET(OSDEF -D_BSD)
+        ENDIF(APPLE)
+    ENDIF()
 ENDIF(NOT WIN32)
 
 OPTION(USE_MSVC_INCREMENTAL_LINKING "Use MSVC Incremental Linking" OFF)
 
 #statically linking VC++ isn't supported for WindowsPhone/WindowsStore
 IF (CMAKE_SYSTEM_NAME STREQUAL WindowsPhone OR CMAKE_SYSTEM_NAME STREQUAL WindowsStore)
-	OPTION(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
+    OPTION(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" OFF) # [IGE]: Use default
 ELSE ()
-	OPTION(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" OFF)
+    OPTION(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" OFF)
 ENDIF (CMAKE_SYSTEM_NAME STREQUAL WindowsPhone OR CMAKE_SYSTEM_NAME STREQUAL WindowsStore)
 OPTION(USE_MSVC_RELEASE_RUNTIME_ALWAYS "Use MSVC Release Runtime Library even in Debug" OFF)
 
@@ -73,116 +73,114 @@ OPTION(USE_MSVC_RELEASE_RUNTIME_ALWAYS "Use MSVC Release Runtime Library even in
 
 
 IF(MSVC)
-	IF (NOT USE_MSVC_INCREMENTAL_LINKING)
-		#MESSAGE("MSVC_INCREMENTAL_DEFAULT"+${MSVC_INCREMENTAL_DEFAULT})
-		SET( MSVC_INCREMENTAL_YES_FLAG "/INCREMENTAL:NO")
+    IF (NOT USE_MSVC_INCREMENTAL_LINKING)
+        #MESSAGE("MSVC_INCREMENTAL_DEFAULT"+${MSVC_INCREMENTAL_DEFAULT})
+        SET( MSVC_INCREMENTAL_YES_FLAG "/INCREMENTAL:NO")
 
-		STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
-		SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO ${replacementFlags}" )
-		MESSAGE("CMAKE_EXE_LINKER_FLAGS_DEBUG=${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
+        STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
+        SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO ${replacementFlags}" )
+        MESSAGE("CMAKE_EXE_LINKER_FLAGS_DEBUG=${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 
-		STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags2 "${CMAKE_EXE_LINKER_FLAGS}")
+        STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags2 "${CMAKE_EXE_LINKER_FLAGS}")
 
-		SET(CMAKE_EXE_LINKER_FLAGS ${replacementFlag2})
-		STRING(REPLACE "INCREMENTAL:YES" "" replacementFlags3 "${CMAKE_EXTRA_LINK_FLAGS}")
+        SET(CMAKE_EXE_LINKER_FLAGS ${replacementFlag2})
+        STRING(REPLACE "INCREMENTAL:YES" "" replacementFlags3 "${CMAKE_EXTRA_LINK_FLAGS}")
 
-		SET(CMAKE_EXTRA_LINK_FLAGS ${replacementFlag3})
+        SET(CMAKE_EXTRA_LINK_FLAGS ${replacementFlag3})
 
 
-		STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags3 "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO}")
-		SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO ${replacementFlags3})
-		SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "/INCREMENTAL:NO ${replacementFlags3}" )
+        STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags3 "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO}")
+        SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO ${replacementFlags3})
+        SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "/INCREMENTAL:NO ${replacementFlags3}" )
 
-	ENDIF (NOT USE_MSVC_INCREMENTAL_LINKING)
+    ENDIF (NOT USE_MSVC_INCREMENTAL_LINKING)
 
-	#[IGE]: Use default MSVC config
-	# IF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-		# #We statically link to reduce dependencies
-		# FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO )
-			# IF(${flag_var} MATCHES "/MD")
-				# STRING(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-			# ENDIF(${flag_var} MATCHES "/MD")
-			# IF(${flag_var} MATCHES "/MDd")
-				# STRING(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-			# ENDIF(${flag_var} MATCHES "/MDd")
-		# ENDFOREACH(flag_var)
-	# ENDIF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+    IF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+        #We statically link to reduce dependencies
+        FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO )
+            IF(${flag_var} MATCHES "/MD")
+                STRING(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+            ENDIF(${flag_var} MATCHES "/MD")
+            IF(${flag_var} MATCHES "/MDd")
+                STRING(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+            ENDIF(${flag_var} MATCHES "/MDd")
+        ENDFOREACH(flag_var)
+    ENDIF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
 
-	# IF (USE_MSVC_RELEASE_RUNTIME_ALWAYS)
-		# FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO )
-			# IF(${flag_var} MATCHES "/MDd")
-				# STRING(REGEX REPLACE "/MDd" "/MD" ${flag_var} "${${flag_var}}")
-			# ENDIF(${flag_var} MATCHES "/MDd")
-			# IF(${flag_var} MATCHES "/MTd")
-				# STRING(REGEX REPLACE "/MTd" "/MT" ${flag_var} "${${flag_var}}")
-			# ENDIF(${flag_var} MATCHES "/MTd")
-			# # Need to remove _DEBUG too otherwise things like _ITERATOR_DEBUG_LEVEL mismatch
-			# IF(${flag_var} MATCHES "-D_DEBUG")
-				# STRING(REGEX REPLACE "-D_DEBUG" "" ${flag_var} "${${flag_var}}")
-			# ENDIF(${flag_var} MATCHES "-D_DEBUG")
-		# ENDFOREACH(flag_var)
-	# ENDIF (USE_MSVC_RELEASE_RUNTIME_ALWAYS)
-	#[/IGE]
+    IF (USE_MSVC_RELEASE_RUNTIME_ALWAYS)
+        FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO )
+            IF(${flag_var} MATCHES "/MDd")
+                STRING(REGEX REPLACE "/MDd" "/MD" ${flag_var} "${${flag_var}}")
+            ENDIF(${flag_var} MATCHES "/MDd")
+            IF(${flag_var} MATCHES "/MTd")
+                STRING(REGEX REPLACE "/MTd" "/MT" ${flag_var} "${${flag_var}}")
+            ENDIF(${flag_var} MATCHES "/MTd")
+            # Need to remove _DEBUG too otherwise things like _ITERATOR_DEBUG_LEVEL mismatch
+            IF(${flag_var} MATCHES "-D_DEBUG")
+                STRING(REGEX REPLACE "-D_DEBUG" "" ${flag_var} "${${flag_var}}")
+            ENDIF(${flag_var} MATCHES "-D_DEBUG")
+        ENDFOREACH(flag_var)
+    ENDIF (USE_MSVC_RELEASE_RUNTIME_ALWAYS)
 
-	IF (CMAKE_CL_64)
-	  ADD_DEFINITIONS(-D_WIN64)
-	ELSE()
-	  OPTION(USE_MSVC_SSE "Use MSVC /arch:sse option"	OFF)
-	  option(USE_MSVC_SSE2 "Compile your program with SSE2 instructions" ON)
+    IF (CMAKE_CL_64)
+      ADD_DEFINITIONS(-D_WIN64)
+    ELSE()
+      OPTION(USE_MSVC_SSE "Use MSVC /arch:sse option"    OFF)
+      option(USE_MSVC_SSE2 "Compile your program with SSE2 instructions" ON)
 
-	  IF (USE_MSVC_SSE)
-		  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE")
-	  ENDIF()
-	  IF (USE_MSVC_SSE2)
-		  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
-	  ENDIF()
+      IF (USE_MSVC_SSE)
+          SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE")
+      ENDIF()
+      IF (USE_MSVC_SSE2)
+          SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
+      ENDIF()
 
-	ENDIF()
+    ENDIF()
 
-	option(USE_MSVC_AVX "Compile your program with AVX instructions"  OFF)
+    option(USE_MSVC_AVX "Compile your program with AVX instructions"  OFF)
 
-	IF(USE_MSVC_AVX)
-		add_definitions(/arch:AVX)
-	ENDIF()
+    IF(USE_MSVC_AVX)
+        add_definitions(/arch:AVX)
+    ENDIF()
 
-	OPTION(USE_MSVC_FAST_FLOATINGPOINT "Use MSVC /fp:fast option"	ON)
-	IF (USE_MSVC_FAST_FLOATINGPOINT)
-		  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:fast")
+    OPTION(USE_MSVC_FAST_FLOATINGPOINT "Use MSVC /fp:fast option"    ON)
+    IF (USE_MSVC_FAST_FLOATINGPOINT)
+          SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:fast")
   ENDIF()
 
-	OPTION(USE_MSVC_STRING_POOLING "Use MSVC /GF string pooling option"	ON)
-	IF (USE_MSVC_STRING_POOLING)
-		SET(CMAKE_C_FLAGS "/GF ${CMAKE_C_FLAGS}")
-		SET(CMAKE_CXX_FLAGS "/GF ${CMAKE_CXX_FLAGS}")
-	ENDIF()
+    OPTION(USE_MSVC_STRING_POOLING "Use MSVC /GF string pooling option"    OFF) # [IGE]: use default
+    IF (USE_MSVC_STRING_POOLING)
+        SET(CMAKE_C_FLAGS "/GF ${CMAKE_C_FLAGS}")
+        SET(CMAKE_CXX_FLAGS "/GF ${CMAKE_CXX_FLAGS}")
+    ENDIF()
 
-	OPTION(USE_MSVC_FUNCTION_LEVEL_LINKING "Use MSVC /Gy function level linking option"	ON)
-	IF(USE_MSVC_FUNCTION_LEVEL_LINKING)
-		SET(CMAKE_C_FLAGS "/Gy ${CMAKE_C_FLAGS}")
-		SET(CMAKE_CXX_FLAGS "/Gy ${CMAKE_CXX_FLAGS}")
-		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:REF")
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:REF")
-	ENDIF(USE_MSVC_FUNCTION_LEVEL_LINKING)
+    OPTION(USE_MSVC_FUNCTION_LEVEL_LINKING "Use MSVC /Gy function level linking option"    OFF)  # [IGE]: use default
+    IF(USE_MSVC_FUNCTION_LEVEL_LINKING)
+        SET(CMAKE_C_FLAGS "/Gy ${CMAKE_C_FLAGS}")
+        SET(CMAKE_CXX_FLAGS "/Gy ${CMAKE_CXX_FLAGS}")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:REF")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:REF")
+    ENDIF(USE_MSVC_FUNCTION_LEVEL_LINKING)
 
-	OPTION(USE_MSVC_EXEPTIONS "Use MSVC C++ exceptions option"	OFF)
+    OPTION(USE_MSVC_EXEPTIONS "Use MSVC C++ exceptions option"    OFF)
 
 
 
-	OPTION(USE_MSVC_COMDAT_FOLDING "Use MSVC /OPT:ICF COMDAT folding option"	ON)
+    OPTION(USE_MSVC_COMDAT_FOLDING "Use MSVC /OPT:ICF COMDAT folding option"    OFF) # [IGE]: use default
 
-	IF(USE_MSVC_COMDAT_FOLDING)
-		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:ICF")
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:ICF")
-	ENDIF()
+    IF(USE_MSVC_COMDAT_FOLDING)
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:ICF")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:ICF")
+    ENDIF()
 
-	OPTION(USE_MSVC_DISABLE_RTTI "Use MSVC /GR- disabled RTTI flags option"	ON)
-	IF(USE_MSVC_DISABLE_RTTI)
-	  STRING(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
-		SET(CMAKE_C_FLAGS "/GR- ${CMAKE_C_FLAGS}")
-		SET(CMAKE_CXX_FLAGS "/GR- ${CMAKE_CXX_FLAGS}")
-	ENDIF(USE_MSVC_DISABLE_RTTI)
+    OPTION(USE_MSVC_DISABLE_RTTI "Use MSVC /GR- disabled RTTI flags option"    OFF) # [IGE]: use default
+    IF(USE_MSVC_DISABLE_RTTI)
+      STRING(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
+        SET(CMAKE_C_FLAGS "/GR- ${CMAKE_C_FLAGS}")
+        SET(CMAKE_CXX_FLAGS "/GR- ${CMAKE_CXX_FLAGS}")
+    ENDIF(USE_MSVC_DISABLE_RTTI)
 
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244 /wd4267")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244 /wd4267")
 ENDIF(MSVC)
 
 
@@ -191,14 +189,14 @@ IF (WIN32)
 OPTION(INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES "Create MSVC projectfiles that can be distributed" OFF)
 
 IF (INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
-	SET (LIBRARY_OUTPUT_PATH ${BULLET_PHYSICS_SOURCE_DIR}/lib CACHE PATH "Single output directory for building all libraries.")
-	SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR})
-	SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BULLET_PHYSICS_SOURCE_DIR})
-	SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BULLET_PHYSICS_SOURCE_DIR})
-	SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${BULLET_PHYSICS_SOURCE_DIR})
-	SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${BULLET_PHYSICS_SOURCE_DIR})
+    SET (LIBRARY_OUTPUT_PATH ${BULLET_PHYSICS_SOURCE_DIR}/lib CACHE PATH "Single output directory for building all libraries.")
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR})
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BULLET_PHYSICS_SOURCE_DIR})
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BULLET_PHYSICS_SOURCE_DIR})
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${BULLET_PHYSICS_SOURCE_DIR})
+    SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${BULLET_PHYSICS_SOURCE_DIR})
 ELSE()
-	SET (LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE PATH "Single output directory for building all libraries.")
+    SET (LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE PATH "Single output directory for building all libraries.")
 ENDIF()
 
 
@@ -249,13 +247,13 @@ ADD_DEFINITIONS( -DUSE_GRAPHICAL_BENCHMARK)
 ENDIF (USE_GRAPHICAL_BENCHMARK)
 
 IF(BULLET2_MULTITHREADING)
-	ADD_DEFINITIONS( -DBT_THREADSAFE=1 )
-	IF (NOT MSVC)
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-	ENDIF (NOT MSVC)
-	IF (NOT WIN32)
-		LINK_LIBRARIES( pthread )
-	ENDIF (NOT WIN32)
+    ADD_DEFINITIONS( -DBT_THREADSAFE=1 )
+    IF (NOT MSVC)
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    ENDIF (NOT MSVC)
+    IF (BUILD_SHARED_LIBS AND NOT WIN32)
+        LINK_LIBRARIES( pthread )
+    ENDIF ()
 ENDIF (BULLET2_MULTITHREADING)
 
 IF (BULLET2_USE_OPEN_MP_MULTITHREADING)
@@ -275,7 +273,9 @@ IF (BULLET2_USE_TBB_MULTITHREADING)
     find_library(TBBMALLOC_LIBRARY tbbmalloc PATHS ${BULLET2_TBB_LIB_DIR})
     ADD_DEFINITIONS("-DBT_USE_TBB=1")
     INCLUDE_DIRECTORIES( ${BULLET2_TBB_INCLUDE_DIR} )
-    LINK_LIBRARIES( ${TBB_LIBRARY} ${TBBMALLOC_LIBRARY} )
+    IF (BUILD_SHARED_LIBS AND NOT WIN32)
+        LINK_LIBRARIES( ${TBB_LIBRARY} ${TBBMALLOC_LIBRARY} )
+    ENDIF ()
 ENDIF (BULLET2_USE_TBB_MULTITHREADING)
 
 IF (BULLET2_USE_PPL_MULTITHREADING)
@@ -283,20 +283,20 @@ IF (BULLET2_USE_PPL_MULTITHREADING)
 ENDIF (BULLET2_USE_PPL_MULTITHREADING)
 
 IF (WIN32)
-OPTION(USE_GLUT "Use Glut"	ON)
+OPTION(USE_GLUT "Use Glut"    ON)
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_DEPRECATE )
 ADD_DEFINITIONS( -D_SCL_SECURE_NO_WARNINGS )
 
 IF (USE_GLUT AND MSVC)
-	string (REPLACE "/D_WINDOWS" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-	remove_definitions(-D_WINDOWS )
+    string (REPLACE "/D_WINDOWS" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+    remove_definitions(-D_WINDOWS )
 ENDIF()
 
 
 
 ELSE(WIN32)
-OPTION(USE_GLUT "Use Glut"	OFF) #[IGE]: disable glut on non Windows platform
+OPTION(USE_GLUT "Use Glut"    OFF) #[IGE]: disable glut on non Windows platform
 ENDIF(WIN32)
 
 
@@ -310,12 +310,12 @@ ENDIF(COMMAND cmake_policy)
 
 FIND_PACKAGE(OpenGL)
 IF (OPENGL_FOUND)
-	MESSAGE("OPENGL FOUND")
-	MESSAGE(${OPENGL_LIBRARIES})
+    MESSAGE("OPENGL FOUND")
+    MESSAGE(${OPENGL_LIBRARIES})
 ELSE (OPENGL_FOUND)
-	MESSAGE("OPENGL NOT FOUND")
-	SET(OPENGL_gl_LIBRARY opengl32)
-	SET(OPENGL_glu_LIBRARY glu32)
+    MESSAGE("OPENGL NOT FOUND")
+    SET(OPENGL_gl_LIBRARY opengl32)
+    SET(OPENGL_glu_LIBRARY glu32)
 ENDIF (OPENGL_FOUND)
 
 
@@ -333,68 +333,68 @@ OPTION(BUILD_BULLET3 "Set when you want to build Bullet 3" OFF) #[IGE]: Disable 
 # build process) unless you explicitly turn on BUILD_PYBULLET.
 OPTION(BUILD_PYBULLET "Set when you want to build pybullet (Python bindings for Bullet)" ON) #[IGE]: enable build pybullet
 IF(BUILD_PYBULLET)
-	#[IGE]: customize build pybullet
-	# SET(PYTHON_VERSION_PYBULLET "" CACHE STRING "Python version pybullet will use.")
-	# SET(Python_ADDITIONAL_VERSIONS 3 3.6 3.5 3.4 3.3 3.2 3.1 3.0 2.7 2.7.12 2.7.10 2.7.3 )
-	# SET_PROPERTY(CACHE PYTHON_VERSION_PYBULLET PROPERTY STRINGS ${Python_ADDITIONAL_VERSIONS})
-	# SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build3/cmake ${CMAKE_MODULE_PATH})
-	# OPTION(EXACT_PYTHON_VERSION "Require Python and match PYTHON_VERSION_PYBULLET exactly, e.g. 2.7.12" OFF)
-	# IF(EXACT_PYTHON_VERSION)
-	    # set(EXACT_PYTHON_VERSION_FLAG EXACT REQUIRED)
-	# ENDIF(EXACT_PYTHON_VERSION)
-	# # first find the python interpreter
-	# FIND_PACKAGE(PythonInterp ${PYTHON_VERSION_PYBULLET} ${EXACT_PYTHON_VERSION_FLAG})
-	# # python library should exactly match that of the interpreter
-	# # the following can result in fatal error if you don't have the right python configuration
-	# FIND_PACKAGE(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
+    #[IGE]: customize build pybullet
+    # SET(PYTHON_VERSION_PYBULLET "" CACHE STRING "Python version pybullet will use.")
+    # SET(Python_ADDITIONAL_VERSIONS 3 3.6 3.5 3.4 3.3 3.2 3.1 3.0 2.7 2.7.12 2.7.10 2.7.3 )
+    # SET_PROPERTY(CACHE PYTHON_VERSION_PYBULLET PROPERTY STRINGS ${Python_ADDITIONAL_VERSIONS})
+    # SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build3/cmake ${CMAKE_MODULE_PATH})
+    # OPTION(EXACT_PYTHON_VERSION "Require Python and match PYTHON_VERSION_PYBULLET exactly, e.g. 2.7.12" OFF)
+    # IF(EXACT_PYTHON_VERSION)
+        # set(EXACT_PYTHON_VERSION_FLAG EXACT REQUIRED)
+    # ENDIF(EXACT_PYTHON_VERSION)
+    # # first find the python interpreter
+    # FIND_PACKAGE(PythonInterp ${PYTHON_VERSION_PYBULLET} ${EXACT_PYTHON_VERSION_FLAG})
+    # # python library should exactly match that of the interpreter
+    # # the following can result in fatal error if you don't have the right python configuration
+    # FIND_PACKAGE(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
 
-	file(TO_CMAKE_PATH $ENV{IGE_LIBS} IGE_LIBS)
+    file(TO_CMAKE_PATH $ENV{IGE_LIBS} IGE_LIBS)
 
-	if(DEFINED ANDROID_PLATFORM)
-		set (ANDROID 1)
-		if(ANDROID_ABI STREQUAL "armeabi-v7a")
-			add_compile_options(-marm -march=armv7-a -mtune=cortex-a15 -mfpu=neon-fp16 -mfloat-abi=softfp)
-		elseif(ANDROID_ABI STREQUAL "x86")
-			add_compile_options(-march=atom -m32 -msse -msse2 -msse3 -mssse3 -mfpmath=sse -mstackrealign)
-		elseif(ANDROID_ABI STREQUAL "arm64-v8a")
-			add_compile_options(-march=armv8-a+simd+sve -mtune=cortex-a53 -D__ARM_NEON -D__ARM_NEON__)
-		elseif(ANDROID_ABI STREQUAL "x86_64")
-			add_compile_options(-march=atom -m64 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mfpmath=sse)
-		endif()
-		if(CMAKE_BUILD_TYPE STREQUAL "Release")
-			add_compile_options(-g0 -Ofast)
-		else(CMAKE_BUILD_TYPE STREQUAL "Debug")
-			add_compile_options(-Og)
-		endif()
-	elseif(MSVC)
-		add_compile_options(/MP)
-	elseif(IOS)
-		if(CMAKE_BUILD_TYPE STREQUAL "Release")
-			add_compile_options(-g0 -Ofast)
-		endif()
-	endif()
+    if(DEFINED ANDROID_PLATFORM)
+        set (ANDROID 1)
+        if(ANDROID_ABI STREQUAL "armeabi-v7a")
+            add_compile_options(-marm -march=armv7-a -mtune=cortex-a15 -mfpu=neon-fp16 -mfloat-abi=softfp)
+        elseif(ANDROID_ABI STREQUAL "x86")
+            add_compile_options(-march=atom -m32 -msse -msse2 -msse3 -mssse3 -mfpmath=sse -mstackrealign)
+        elseif(ANDROID_ABI STREQUAL "arm64-v8a")
+            add_compile_options(-march=armv8-a+simd+sve -mtune=cortex-a53 -D__ARM_NEON -D__ARM_NEON__)
+        elseif(ANDROID_ABI STREQUAL "x86_64")
+            add_compile_options(-march=atom -m64 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mfpmath=sse)
+        endif()
+        if(CMAKE_BUILD_TYPE STREQUAL "Release")
+            add_compile_options(-g0 -Ofast)
+        else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            add_compile_options(-Og)
+        endif()
+    elseif(MSVC)
+        add_compile_options(/MP)
+    elseif(IOS)
+        if(CMAKE_BUILD_TYPE STREQUAL "Release")
+            add_compile_options(-g0 -Ofast)
+        endif()
+    endif()
 
 
-	set (PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Include")
-	if (MSVC)
-		list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/PC")
-	elseif (OSX)
-		list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Mac")
-	elseif (ANDROID)
-		list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Android")
-	elseif (IOS)
-		list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/IOS")
-	endif ()
+    set (PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Include")
+    if (MSVC)
+        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/PC")
+    elseif (OSX)
+        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Mac")
+    elseif (ANDROID)
+        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Android")
+    elseif (IOS)
+        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/IOS")
+    endif ()
 
-	set (PYTHON_NUMPY_INCLUDE_DIR 
-			"${IGE_LIBS}/numpy/include"
-			"${IGE_LIBS}/numpy/include/numpy"
-			"${IGE_LIBS}/numpy/include/numpy/core"
-			"${IGE_LIBS}/numpy/include/numpy/core/include"
-			"${IGE_LIBS}/numpy/include/numpy/core/include/numpy"
-			"${IGE_LIBS}/numpy/include/numpy/core/include/numpy/random"
-		)
-	#[/IGE]
+    set (PYTHON_NUMPY_INCLUDE_DIR 
+            "${IGE_LIBS}/numpy/include"
+            "${IGE_LIBS}/numpy/include/numpy"
+            "${IGE_LIBS}/numpy/include/numpy/core"
+            "${IGE_LIBS}/numpy/include/numpy/core/include"
+            "${IGE_LIBS}/numpy/include/numpy/core/include/numpy"
+            "${IGE_LIBS}/numpy/include/numpy/core/include/numpy/random"
+        )
+    #[/IGE]
 ENDIF(BUILD_PYBULLET)
 
 OPTION(BUILD_ENET "Set when you want to build apps with enet UDP networking support" ON)
@@ -402,91 +402,91 @@ OPTION(BUILD_CLSOCKET "Set when you want to build apps with enet TCP networking 
 
 
 IF(BUILD_PYBULLET)
-	# FIND_PACKAGE(PythonLibs) #[IGE]: REM this
+    # FIND_PACKAGE(PythonLibs) #[IGE]: REM this
 
-	OPTION(BUILD_PYBULLET_NUMPY "Set when you want to build pybullet with NumPy support" ON) #[IGE]: Enable numpy support
-	OPTION(BUILD_PYBULLET_ENET "Set when you want to build pybullet with enet UDP networking support" ON)
-	OPTION(BUILD_PYBULLET_CLSOCKET "Set when you want to build pybullet with enet TCP networking support" ON)
+    OPTION(BUILD_PYBULLET_NUMPY "Set when you want to build pybullet with NumPy support" ON) #[IGE]: Enable numpy support
+    OPTION(BUILD_PYBULLET_ENET "Set when you want to build pybullet with enet UDP networking support" ON)
+    OPTION(BUILD_PYBULLET_CLSOCKET "Set when you want to build pybullet with enet TCP networking support" ON)
 
-	OPTION(BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK "Set when you want to use the Python Framework on Mac" OFF)
+    OPTION(BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK "Set when you want to use the Python Framework on Mac" OFF)
 
-	IF(BUILD_PYBULLET_NUMPY)
-		#include(FindNumPy)
-		#[IGE]: customize numpy path
-		# FIND_PACKAGE(NumPy)
-		# if (PYTHON_NUMPY_FOUND)
-			# message("NumPy found")
-			add_definitions(-DPYBULLET_USE_NUMPY)
-		# else()
-			# message("NumPy not found")
-		# endif()
-		#[/IGE]
-	ENDIF()
+    IF(BUILD_PYBULLET_NUMPY)
+        #include(FindNumPy)
+        #[IGE]: customize numpy path
+        # FIND_PACKAGE(NumPy)
+        # if (PYTHON_NUMPY_FOUND)
+            # message("NumPy found")
+            add_definitions(-DPYBULLET_USE_NUMPY)
+        # else()
+            # message("NumPy not found")
+        # endif()
+        #[/IGE]
+    ENDIF()
 
-	IF(WIN32)
-		SET(BUILD_SHARED_LIBS OFF CACHE BOOL "Shared Libs" FORCE)
-	ELSE(WIN32)
-		SET(BUILD_SHARED_LIBS OFF CACHE BOOL "Shared Libs" FORCE) #[IGE]: force build static libs
-	ENDIF(WIN32)
+    IF(WIN32)
+        SET(BUILD_SHARED_LIBS OFF CACHE BOOL "Shared Libs" FORCE)
+    ELSE(WIN32)
+        SET(BUILD_SHARED_LIBS OFF CACHE BOOL "Shared Libs" FORCE) #[IGE]: force build static libs
+    ENDIF(WIN32)
 
-	IF(APPLE)
-		OPTION(BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK "Set when you want to use the Python Framework on Mac" ON)
-		IF(NOT BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK)
-			add_definitions(-DB3_NO_PYTHON_FRAMEWORK)
-		ENDIF(NOT BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK)
-		OPTION(BUILD_PYBULLET_SHOW_PY_VERSION "Set when you want to show the PY_MAJOR_VERSION and PY_MAJOR_VERSION using #pragme message." OFF)
-		IF(BUILD_PYBULLET_SHOW_PY_VERSION)
-			add_definitions(-DB3_DUMP_PYTHON_VERSION)
-		ENDIF()
+    IF(APPLE)
+        OPTION(BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK "Set when you want to use the Python Framework on Mac" ON)
+        IF(NOT BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK)
+            add_definitions(-DB3_NO_PYTHON_FRAMEWORK)
+        ENDIF(NOT BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK)
+        OPTION(BUILD_PYBULLET_SHOW_PY_VERSION "Set when you want to show the PY_MAJOR_VERSION and PY_MAJOR_VERSION using #pragme message." OFF)
+        IF(BUILD_PYBULLET_SHOW_PY_VERSION)
+            add_definitions(-DB3_DUMP_PYTHON_VERSION)
+        ENDIF()
 
-	ENDIF(APPLE)
+    ENDIF(APPLE)
 
-	#[IGE]: customize build pybullet
-	IF(EXISTS ${BULLET_PHYSICS_SOURCE_DIR}/examples/pybullet AND IS_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR}/examples/pybullet)
-		add_subdirectory(examples/pybullet pybullet)
-	ENDIF()
-	#[/IGE]
+    #[IGE]: customize build pybullet
+    IF(EXISTS ${BULLET_PHYSICS_SOURCE_DIR}/examples/pybullet AND IS_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR}/examples/pybullet)
+        add_subdirectory(examples/pybullet pybullet)
+    ENDIF()
+    #[/IGE]
 ENDIF(BUILD_PYBULLET)
 
 IF(NOT WIN32 AND NOT APPLE)
-    OPTION(BUILD_EGL "Build OpenGL/EGL" ON)
-    IF(BUILD_EGL)
+    # OPTION(BUILD_EGL "Build OpenGL/EGL" ON)
+    # IF(BUILD_EGL)
         ADD_DEFINITIONS(-DBT_USE_EGL)
-    ENDIF(BUILD_EGL)
+    # ENDIF(BUILD_EGL)
 ENDIF()
 
 IF(BUILD_BULLET3)
-	 IF(APPLE)
-		MESSAGE("Mac OSX Version is ${_CURRENT_OSX_VERSION}")
-		IF(_CURRENT_OSX_VERSION  VERSION_LESS 10.9)
-			MESSAGE("Mac OSX below 10.9 has no OpenGL 3 support so please disable the BUILD_OPENGL3_DEMOS option")
-			#unset(BUILD_OPENGL3_DEMOS CACHE)
+     IF(APPLE)
+        MESSAGE("Mac OSX Version is ${_CURRENT_OSX_VERSION}")
+        IF(_CURRENT_OSX_VERSION  VERSION_LESS 10.9)
+            MESSAGE("Mac OSX below 10.9 has no OpenGL 3 support so please disable the BUILD_OPENGL3_DEMOS option")
+            #unset(BUILD_OPENGL3_DEMOS CACHE)
 
-			OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build the OpenGL3+ demos" OFF)
-		ELSE()
-			OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build the OpenGL3+ demos" ON)
-		ENDIF()
-	ELSE()
-		OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build Bullet 3 OpenGL3+ demos" ON)
-	ENDIF()
+            OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build the OpenGL3+ demos" OFF)
+        ELSE()
+            OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build the OpenGL3+ demos" ON)
+        ENDIF()
+    ELSE()
+        OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build Bullet 3 OpenGL3+ demos" ON)
+    ENDIF()
 ELSE(BUILD_BULLET3)
-	unset(BUILD_OPENGL3_DEMOS CACHE)
-	OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build Bullet 3 OpenGL3+ demos" OFF)
+    unset(BUILD_OPENGL3_DEMOS CACHE)
+    OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build Bullet 3 OpenGL3+ demos" OFF)
 ENDIF(BUILD_BULLET3)
 IF(BUILD_OPENGL3_DEMOS)
-	IF(EXISTS ${BULLET_PHYSICS_SOURCE_DIR}/Demos3 AND IS_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR}/Demos3)
-		SUBDIRS(Demos3)
-	ENDIF()
+    IF(EXISTS ${BULLET_PHYSICS_SOURCE_DIR}/Demos3 AND IS_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR}/Demos3)
+        SUBDIRS(Demos3)
+    ENDIF()
 ELSE()
-	ADD_DEFINITIONS(-DNO_OPENGL3)
+    # ADD_DEFINITIONS(-DNO_OPENGL3)
 ENDIF(BUILD_OPENGL3_DEMOS)
 
 OPTION(BUILD_BULLET2_DEMOS "Set when you want to build the Bullet 2 demos" OFF) #[IGE]: Turn off demo
 IF(BUILD_BULLET2_DEMOS)
 
-	IF(EXISTS ${BULLET_PHYSICS_SOURCE_DIR}/examples AND IS_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR}/examples)
-		SUBDIRS(examples)
-	ENDIF()
+    IF(EXISTS ${BULLET_PHYSICS_SOURCE_DIR}/examples AND IS_DIRECTORY ${BULLET_PHYSICS_SOURCE_DIR}/examples)
+        SUBDIRS(examples)
+    ENDIF()
 
 ENDIF(BUILD_BULLET2_DEMOS)
 
@@ -502,46 +502,46 @@ ENDIF(BUILD_EXTRAS)
 SUBDIRS(src)
 
 IF("${CMAKE_GENERATOR}" MATCHES "Unix Makefiles")
-	OPTION(INSTALL_LIBS "Set when you want to install libraries" ON)
+    OPTION(INSTALL_LIBS "Set when you want to install libraries" ON)
 ELSE()
-	IF(APPLE AND FRAMEWORK)
-		OPTION(INSTALL_LIBS "Set when you want to install libraries" ON)
-	ELSE()
+    IF(APPLE AND FRAMEWORK)
+        OPTION(INSTALL_LIBS "Set when you want to install libraries" ON)
+    ELSE()
 #by default, don't enable the 'INSTALL' option for Xcode and MSVC projectfiles
-		OPTION(INSTALL_LIBS "Set when you want to install libraries" OFF)
-	ENDIF()
+        OPTION(INSTALL_LIBS "Set when you want to install libraries" OFF)
+    ENDIF()
 ENDIF()
 
 
 IF(INSTALL_LIBS)
-	#INSTALL of other files requires CMake 2.6
-	IF(BUILD_EXTRAS)
-		IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
-			OPTION(INSTALL_EXTRA_LIBS "Set when you want extra libraries installed" ON)
-		ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
-	ENDIF(BUILD_EXTRAS)
+    #INSTALL of other files requires CMake 2.6
+    IF(BUILD_EXTRAS)
+        IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
+            OPTION(INSTALL_EXTRA_LIBS "Set when you want extra libraries installed" ON)
+        ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
+    ENDIF(BUILD_EXTRAS)
 
-	SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
-	SET (LIB_DESTINATION "lib${LIB_SUFFIX}" CACHE STRING "Library directory name")
-	## the following are directories where stuff will be installed to
-	SET(INCLUDE_INSTALL_DIR "include/bullet/" CACHE PATH "The subdirectory to the header prefix")
-	SET(PKGCONFIG_INSTALL_PREFIX "lib${LIB_SUFFIX}/pkgconfig/" CACHE STRING "Base directory for pkgconfig files")
-	IF(NOT MSVC)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/bullet.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/bullet.pc @ONLY)
-  	INSTALL(
-		FILES
-		${CMAKE_CURRENT_BINARY_DIR}/bullet.pc
-		DESTINATION
-		${PKGCONFIG_INSTALL_PREFIX})
-	ENDIF(NOT MSVC)
+    SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
+    SET (LIB_DESTINATION "lib${LIB_SUFFIX}" CACHE STRING "Library directory name")
+    ## the following are directories where stuff will be installed to
+    SET(INCLUDE_INSTALL_DIR "include/bullet/" CACHE PATH "The subdirectory to the header prefix")
+    SET(PKGCONFIG_INSTALL_PREFIX "lib${LIB_SUFFIX}/pkgconfig/" CACHE STRING "Base directory for pkgconfig files")
+    IF(NOT MSVC)
+      CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/bullet.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/bullet.pc @ONLY)
+      INSTALL(
+        FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/bullet.pc
+        DESTINATION
+        ${PKGCONFIG_INSTALL_PREFIX})
+    ENDIF(NOT MSVC)
 ENDIF()
 
 
-OPTION(BUILD_UNIT_TESTS "Build Unit Tests"	OFF) #[IGE]: Turn off test
+OPTION(BUILD_UNIT_TESTS "Build Unit Tests"    OFF) #[IGE]: Turn off test
 
 IF (BUILD_UNIT_TESTS)
-	ENABLE_TESTING()
-	SUBDIRS(test)
+    ENABLE_TESTING()
+    SUBDIRS(test)
 ENDIF()
 
 set (BULLET_CONFIG_CMAKE_PATH lib${LIB_SUFFIX}/cmake/bullet )
@@ -553,15 +553,15 @@ list (APPEND BULLET_LIBRARIES BulletCollision)
 list (APPEND BULLET_LIBRARIES BulletDynamics)
 list (APPEND BULLET_LIBRARIES BulletSoftBody)
 set (BULLET_USE_FILE ${BULLET_CONFIG_CMAKE_PATH}/UseBullet.cmake)
-configure_file 	( ${CMAKE_CURRENT_SOURCE_DIR}/BulletConfig.cmake.in
-					${CMAKE_CURRENT_BINARY_DIR}/BulletConfig.cmake
-					@ONLY ESCAPE_QUOTES
-				)
+configure_file     ( ${CMAKE_CURRENT_SOURCE_DIR}/BulletConfig.cmake.in
+                    ${CMAKE_CURRENT_BINARY_DIR}/BulletConfig.cmake
+                    @ONLY ESCAPE_QUOTES
+                )
 OPTION(INSTALL_CMAKE_FILES "Install generated CMake files" OFF) #[IGE]: no install
 
 IF (INSTALL_CMAKE_FILES)
-	install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/UseBullet.cmake
-		${CMAKE_CURRENT_BINARY_DIR}/BulletConfig.cmake
-		DESTINATION ${BULLET_CONFIG_CMAKE_PATH}
-	)
+    install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/UseBullet.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/BulletConfig.cmake
+        DESTINATION ${BULLET_CONFIG_CMAKE_PATH}
+    )
 ENDIF (INSTALL_CMAKE_FILES)

@@ -4,26 +4,25 @@
 #include "ShapeData.h"
 
 #ifdef BT_USE_EGL
-#include "EGLOpenGLWindow.h"
+	#include "EGLOpenGLWindow.h"
 #else
-#endif  //BT_USE_EGL
+	#ifdef B3_USE_GLFW
+		#include "GLFWOpenGLWindow.h"
+	#else
+		#ifdef __APPLE__
+			#include "MacOpenGLWindow.h"
+		#else
+			#ifdef _WIN32
+				#include "Win32OpenGLWindow.h"
+			#else
+				//let's cross the fingers it is Linux/X11
+				#include "X11OpenGLWindow.h"
+				#define BT_USE_X11  // for runtime backend selection, move to build?
+			#endif //_WIN32
+		#endif //__APPLE__
+	#endif //B3_USE_GLFW
+#endif //BT_USE_EGL
 
-#ifdef B3_USE_GLFW
-#include "GLFWOpenGLWindow.h"
-#else
-#ifdef __APPLE__
-#include "MacOpenGLWindow.h"
-#else
-
-#ifdef _WIN32
-#include "Win32OpenGLWindow.h"
-#else
-//let's cross the fingers it is Linux/X11
-#include "X11OpenGLWindow.h"
-#define BT_USE_X11  // for runtime backend selection, move to build?
-#endif              //_WIN32
-#endif              //__APPLE__
-#endif              //B3_USE_GLFW
 
 #include <stdio.h>
 
@@ -314,6 +313,9 @@ SimpleOpenGL3App::SimpleOpenGL3App(const char* title, int width, int height, boo
 
 	m_data = new SimpleInternalData;
 
+#ifdef BT_USE_EGL
+	m_window = new EGLOpenGLWindow();
+#else
 	if (windowType == 0)
 	{
 		m_window = new b3gDefaultOpenGLWindow();
@@ -329,13 +331,9 @@ SimpleOpenGL3App::SimpleOpenGL3App(const char* title, int width, int height, boo
 	}
 	else if (windowType == 2)
 	{
-#ifdef BT_USE_EGL
-		m_window = new EGLOpenGLWindow();
-#else
 		b3Warning("EGL window requires compilation with BT_USE_EGL.\n");
 		b3Warning("Loading default window instead. \n");
 		m_window = new b3gDefaultOpenGLWindow();
-#endif
 	}
 	else
 	{
@@ -343,6 +341,7 @@ SimpleOpenGL3App::SimpleOpenGL3App(const char* title, int width, int height, boo
 		b3Warning("Loading default window instead. \n");
 		m_window = new b3gDefaultOpenGLWindow();
 	}
+#endif //BT_USE_EGL
 
 	m_window->setAllowRetina(allowRetina);
 

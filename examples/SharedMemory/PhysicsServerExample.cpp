@@ -3381,7 +3381,7 @@ void PhysicsServerExample::vrGenericTrackerMoveCallback(int controllerId, float 
 	m_args[0].m_csGUI->unlock();
 }
 
-extern int gSharedMemoryKey = -1; // [IGE]: add default value, fix linking error
+extern int gSharedMemoryKey;
 
 class CommonExampleInterface* PhysicsServerCreateFuncInternal(struct CommonExampleOptions& options)
 {

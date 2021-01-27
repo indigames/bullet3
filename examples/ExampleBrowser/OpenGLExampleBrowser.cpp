@@ -1,10 +1,11 @@
 #include "OpenGLExampleBrowser.h"
 #include "LinearMath/btQuickprof.h"
 #include "../OpenGLWindow/OpenGLInclude.h"
-#include "../OpenGLWindow/SimpleOpenGL2App.h"
 #ifndef NO_OPENGL3
 #include "../OpenGLWindow/SimpleOpenGL3App.h"
-#endif
+#else //NO_OPENGL3
+#include "../OpenGLWindow/SimpleOpenGL2App.h"
+#endif //NO_OPENGL3
 #include "../CommonInterfaces/CommonRenderInterface.h"
 #ifdef __APPLE__
 #include "../OpenGLWindow/MacOpenGLWindow.h"
@@ -901,6 +902,7 @@ bool OpenGLExampleBrowser::init(int argc, char* argv[])
 	const char* glContext = "[btgl]";
 #endif
 
+#ifdef NO_OPENGL3
 	if (sUseOpenGL2)
 	{
 		char title[1024];
@@ -908,9 +910,8 @@ bool OpenGLExampleBrowser::init(int argc, char* argv[])
 		s_app = new SimpleOpenGL2App(title, width, height);
 		s_app->m_renderer = new SimpleOpenGL2Renderer(width, height);
 	}
-
-#ifndef NO_OPENGL3
 	else
+#else //NO_OPENGL3
 	{
 		char title[1024];
 		sprintf(title, "%s using OpenGL3+ %s %s", appTitle, glContext, optMode);
