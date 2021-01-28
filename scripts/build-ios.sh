@@ -34,12 +34,7 @@ if [ $? -ne 0 ]; then
 fi
 
 [ ! -d "$OUTPUT_DIR/arm64" ] && mkdir -p $OUTPUT_DIR/arm64
-cp -R -f -p ./Release-iphoneos/*.a $OUTPUT_DIR/arm64
-cp -R -f -p ./depends/freetype/Release-iphoneos/*.a $OUTPUT_DIR/arm64
-cp -R -f -p ./depends/fribidi/Release-iphoneos/*.a $OUTPUT_DIR/arm64
-cp -R -f -p ./depends/lcms2/Release-iphoneos/*.a $OUTPUT_DIR/arm64
-cp -R -f -p ./depends/libimagequant/Release-iphoneos/*.a $OUTPUT_DIR/arm64
-cp -R -f -p ./depends/libraqm/Release-iphoneos/*.a $OUTPUT_DIR/arm64
+find . -name \*.a -exec cp {} $OUTPUT_DIR/arm64 \;
 cp -R -f -p ./Release-iphoneos/*.so $OUTPUT_DIR/arm64
 
 echo DONE!

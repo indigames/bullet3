@@ -197,7 +197,7 @@ ENDIF (BUILD_SHARED_LIBS)
   ENDIF (APPLE AND BUILD_SHARED_LIBS AND FRAMEWORK)	
 
  #[IGE]: fix android build
-IF(APPLE)
+IF(APPLE AND (NOT IOS))
     CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/bullet_robotics_gui.pc.cmake
                    ${CMAKE_CURRENT_BINARY_DIR}/bullet_robotics_gui.pc @ONLY)
   	INSTALL(

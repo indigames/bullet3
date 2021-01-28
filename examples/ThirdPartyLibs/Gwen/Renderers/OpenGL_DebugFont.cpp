@@ -10,7 +10,7 @@
 #include <GLFW/glfw3.h>
 #else
 
-#if defined(__APPLE__) && !defined(VMDMESA)
+#if defined(__APPLE__) && !defined(VMDMESA) && !defined(IOS)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl.h>
 #else
