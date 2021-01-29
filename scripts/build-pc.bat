@@ -38,6 +38,29 @@ echo Cleaning up...
     mkdir %OUTPUT_LIBS_RELEASE%
 
 cd %PROJECT_DIR%
+echo Compiling x86...
+    if not exist %BUILD_DIR%\x86 (
+        mkdir %BUILD_DIR%\x86
+    )
+    echo Generating x86 CMAKE project ...
+    cd %BUILD_DIR%\x86
+    cmake %PROJECT_DIR% -A Win32 -DAPP_STYLE=STATIC
+    if %ERRORLEVEL% NEQ 0 goto ERROR
+
+    if [%BUILD_DEBUG%]==[1] (
+        echo Compiling x86 - Debug...
+        cmake --build . --config Debug -- -m
+        if %ERRORLEVEL% NEQ 0 goto ERROR
+        for /r %CD% %%f in (*.lib) do xcopy /y %%f %OUTPUT_LIBS_RELEASE%\x86\
+    )
+
+    echo Compiling x86 - Release...
+    cmake --build . --config Release -- -m
+    if %ERRORLEVEL% NEQ 0 goto ERROR
+    for /r %CD% %%f in (*.lib) do xcopy /y %%f %OUTPUT_LIBS_RELEASE%\x86\
+echo Compiling x86 DONE
+
+cd %PROJECT_DIR%
 echo Compiling x64...
     if not exist %BUILD_DIR%\x64 (
         mkdir %BUILD_DIR%\x64
@@ -50,8 +73,8 @@ echo Compiling x64...
     if [%BUILD_DEBUG%]==[1] (
         echo Compiling x64 - Debug...
         cmake --build . --config Debug -- -m
-        if %ERRORLEVEL% NEQ 0 goto ERROR		
-		for /r %CD% %%f in (*.lib) do xcopy /y %%f %OUTPUT_LIBS_RELEASE%\x64\		
+        if %ERRORLEVEL% NEQ 0 goto ERROR
+        for /r %CD% %%f in (*.lib) do xcopy /y %%f %OUTPUT_LIBS_RELEASE%\x64\
     )
 
     echo Compiling x64 - Release...

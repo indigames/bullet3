@@ -56,7 +56,7 @@ IF(NOT WIN32)
     ENDIF()
 ENDIF(NOT WIN32)
 
-OPTION(USE_MSVC_INCREMENTAL_LINKING "Use MSVC Incremental Linking" OFF)
+OPTION(USE_MSVC_INCREMENTAL_LINKING "Use MSVC Incremental Linking" ON)
 
 #statically linking VC++ isn't supported for WindowsPhone/WindowsStore
 IF (CMAKE_SYSTEM_NAME STREQUAL WindowsPhone OR CMAKE_SYSTEM_NAME STREQUAL WindowsStore)
@@ -95,17 +95,19 @@ IF(MSVC)
 
     ENDIF (NOT USE_MSVC_INCREMENTAL_LINKING)
 
-    IF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-        #We statically link to reduce dependencies
-        FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO )
-            IF(${flag_var} MATCHES "/MD")
-                STRING(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-            ENDIF(${flag_var} MATCHES "/MD")
-            IF(${flag_var} MATCHES "/MDd")
-                STRING(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-            ENDIF(${flag_var} MATCHES "/MDd")
-        ENDFOREACH(flag_var)
-    ENDIF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+    # [IGE]: Use MSVC default config, avoid linking issues
+    # IF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+        # #We statically link to reduce dependencies
+        # FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO )
+            # IF(${flag_var} MATCHES "/MD")
+                # STRING(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+            # ENDIF(${flag_var} MATCHES "/MD")
+            # IF(${flag_var} MATCHES "/MDd")
+                # STRING(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+            # ENDIF(${flag_var} MATCHES "/MDd")
+        # ENDFOREACH(flag_var)
+    # ENDIF (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+    # [/IGE]
 
     IF (USE_MSVC_RELEASE_RUNTIME_ALWAYS)
         FOREACH(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO )
