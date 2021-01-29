@@ -1,6 +1,6 @@
 #include "InProcessExampleBrowser.h"
 
-#define EXAMPLE_CONSOLE_ONLY // [IGE]: unrem to disable GUI
+// #define EXAMPLE_CONSOLE_ONLY
 #ifdef EXAMPLE_CONSOLE_ONLY
 #include "EmptyBrowser.h"
 typedef EmptyBrowser DefaultBrowser;
