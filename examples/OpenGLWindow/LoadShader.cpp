@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string> /// [IGE]: add for string manipulation
 
 // Load the shader from the source text
 void gltLoadShaderSrc(const char *szShaderSrc, GLuint shader)
@@ -27,8 +28,50 @@ GLuint gltLoadShaderPair(const char *szVertexProg, const char *szFragmentProg)
 	hVertexShader = glCreateShader(GL_VERTEX_SHADER);
 	hFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
+/// [IGE]: Fix GLES
+#ifdef GLAD_GLES2
+	const auto strToFind150 = std::string("#version 150");
+	const auto strToFind330Core = std::string("#version 330 core");
+	const auto strToFind330 = std::string("#version 330");
+	const auto strToReplace = std::string("#version 300 es\nprecision highp float;\nprecision highp sampler2DShadow;");
+	auto vShader = std::string(szVertexProg);
+	auto hShader = std::string(szFragmentProg);
+
+	// Find #150
+	auto idx = vShader.find(strToFind150);
+	if(idx != std::string::npos)
+		vShader.replace(idx, strToFind150.length(), strToReplace);
+
+	idx = hShader.find(strToFind150);
+	if(idx != std::string::npos)
+		hShader.replace(idx, strToFind150.length(), strToReplace);
+
+	// Find 330 core
+	idx = vShader.find(strToFind330Core);
+	if(idx != std::string::npos)
+		vShader.replace(idx, strToFind330Core.length(), strToReplace);
+
+	idx = hShader.find(strToFind330Core);
+	if(idx != std::string::npos)
+		hShader.replace(idx, strToFind330Core.length(), strToReplace);
+
+	// Find 330
+	idx = vShader.find(strToFind330);
+	if(idx != std::string::npos)
+		vShader.replace(idx, strToFind330.length(), strToReplace);
+
+	idx = hShader.find(strToFind330);
+	if(idx != std::string::npos)
+		hShader.replace(idx, strToFind330.length(), strToReplace);
+
+	// Load shader
+	gltLoadShaderSrc(vShader.c_str(), hVertexShader);
+	gltLoadShaderSrc(hShader.c_str(), hFragmentShader);
+#else
 	gltLoadShaderSrc(szVertexProg, hVertexShader);
 	gltLoadShaderSrc(szFragmentProg, hFragmentShader);
+#endif
+/// [/IGE]
 
 	// Compile them
 	glCompileShader(hVertexShader);

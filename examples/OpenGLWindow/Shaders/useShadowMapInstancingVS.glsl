@@ -25,16 +25,9 @@ uniform vec3 materialSpecularColorIn;
 
 out vec4 ShadowCoord;
 
-out Fragment
-{
-     vec4 color;
-} fragment;
+out vec4 fragment_color;
 
-out Vert
-{
-	vec2 texcoord;
-} vert;
-
+out vec2 vert_texcoord;
 
 vec4 quatMul ( in vec4 q1, in vec4 q2 )
 {
@@ -99,7 +92,7 @@ void main(void)
 	gl_Position = vertexLoc;
 	ShadowCoord = DepthBiasModelViewProjectionMatrix * vec4((instance_position+localcoord).xyz,1);
 
-	fragment.color = instance_color;
-	vert.texcoord = uvcoords;
+	fragment_color = instance_color;
+	vert_texcoord = uvcoords;
 }
 

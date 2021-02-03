@@ -22,16 +22,9 @@ uniform vec3 materialSpecularColorIn;
 
 out vec4 ShadowCoord;
 
-out Fragment
-{
-     vec4 color;
-} fragment;
+out vec4 fragment_color;
 
-out Vert
-{
-	vec2 texcoord;
-} vert;
-
+out vec2 vert_texcoord;
 
 vec4 quatMul ( in vec4 q1, in vec4 q2 )
 {
@@ -92,6 +85,6 @@ void main(void)
 	vec4 vertexLoc = MVP* vec4((instance_position+localcoord).xyz,1);
 	gl_Position = vertexLoc;
 
-	fragment.color = instance_color;
+	fragment_color = instance_color;
 }
 

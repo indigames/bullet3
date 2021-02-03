@@ -11,15 +11,11 @@ layout (location = 5) in vec4 instance_color;
 layout (location = 6) in vec4 instance_scale_obUid;
 
 
-uniform float screenWidth = 700.f;
+uniform float screenWidth;
 uniform mat4 ModelViewMatrix;
 uniform mat4 ProjectionMatrix;
 
-out Fragment
-{
-     vec4 color;
-} fragment;
-
+out vec4 fragment_color;
 
 
 //
@@ -30,10 +26,10 @@ out vec3 ambient;
 
 void main(void)
 {
-	ambient = vec3(0.3,.3,0.3);
+	ambient = vec3(0.3,0.3,0.3);
 		
 		
-	vec4 axis = vec4(1,1,1,0);
+	vec4 axis = vec4(1.0,1.0,1.0,0.0);
 	vec4 vertexPos = ProjectionMatrix * ModelViewMatrix *(instance_position);
 	vec3 posEye = vec3(ModelViewMatrix * vec4(instance_position.xyz, 1.0));
    float dist = length(posEye);
@@ -42,5 +38,5 @@ void main(void)
 
 	gl_Position = vertexPos;
 	
-	fragment.color = instance_color;
+	fragment_color = instance_color;
 }

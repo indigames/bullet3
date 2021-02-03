@@ -34,11 +34,17 @@ static GLuint BindFont(const CTexFont* _Font)
 	GLuint TexID = 0;
 	glGenTextures(1, &TexID);
 	glBindTexture(GL_TEXTURE_2D, TexID);
+
+/// [IGE]: Fix GLES
+#ifndef GLAD_GLES2
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
 	glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+#endif
+/// [/IGE]
+
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, _Font->m_TexWidth, _Font->m_TexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, _Font->m_TexBytes);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

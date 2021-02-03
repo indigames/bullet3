@@ -1,10 +1,7 @@
 #version 330 core
-//precision highp float;
+precision highp float;
 
-in Fragment
-{
-     vec4 color;
-} fragment;
+in vec4 fragment_color;
 
 uniform sampler2D Diffuse;
 uniform mat4 ViewMatrixInverse;
@@ -23,16 +20,16 @@ void main(void)
 {
     vec4 projcoords = TextureMVP * vertexPos;
     vec2 texturecoords = projcoords.xy/projcoords.w;
-	vec4 texel = fragment.color*texture(Diffuse,texturecoords);
+	vec4 texel = fragment_color*texture(Diffuse,texturecoords);
 	vec3 ct,cf;
 	float intensity,at,af;
-	if (fragment.color.w==0)
+	if (fragment_color.w==0.0)
 		discard;
 	vec3 lightDir = normalize(lightPos);
 	
 	vec3 normalDir = normalize(normal);
  
-	intensity = 0.5+0.5*clamp( dot( normalDir,lightDir ), -1,1 );
+	intensity = 0.5+0.5*clamp( dot( normalDir,lightDir ), -1.0, 1.0 );
 	
 	af = 1.0;
 		
@@ -47,16 +44,15 @@ void main(void)
 	{
 		specularReflection = vec3(0.0, 0.0, 0.0);
 	}
-  else // light source on the right side
+	else // light source on the right side
 	{
 		vec3 surfaceToLight = normalize(lightPos - vertexPos.xyz);
-    vec3 surfaceToCamera = normalize(cameraPosition - vertexPos.xyz);
+		vec3 surfaceToCamera = normalize(cameraPosition - vertexPos.xyz);
     
     
-    float specularCoefficient = 0.0;
+		float specularCoefficient = 0.0;
 		specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normalDir))), materialShininess);
-    specularReflection = specularCoefficient * materialSpecularColor * lightSpecularIntensity;
-  
+		specularReflection = specularCoefficient * materialSpecularColor * lightSpecularIntensity;  
 	}
     
 
@@ -65,5 +61,5 @@ void main(void)
 	intensity = 0.7*intensity  + 0.3*intensity*visibility;
 	
 	cf = intensity*(vec3(1.0,1.0,1.0)-ambient)+ambient+specularReflection*visibility;
-	color  = vec4(ct * cf, fragment.color.w);
+	color  = vec4(ct * cf, fragment_color.w);
 }

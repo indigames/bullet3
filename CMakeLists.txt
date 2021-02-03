@@ -376,6 +376,14 @@ IF(BUILD_PYBULLET)
         endif()
     endif()
 
+# [IGE]: Add support for OpenGLES 3.0
+    if(ANDROID OR IOS)
+        ADD_DEFINITIONS(-DGLAD_GLES2)
+    else()
+        ADD_DEFINITIONS(-DGLAD_GL)
+    endif()
+# [/IGE]
+
 
     set (PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Include")
     if (MSVC)
@@ -450,11 +458,18 @@ IF(BUILD_PYBULLET)
     #[/IGE]
 ENDIF(BUILD_PYBULLET)
 
+# [IGE]: add support for SDL Windowing System
+OPTION(BUILD_SDL "Build OpenGL/EGL based on SDL" ON)
+IF(BUILD_SDL)
+    ADD_DEFINITIONS(-DB3_USE_SDL)
+ENDIF()
+# [/IGE]
+
 IF(NOT WIN32 AND NOT APPLE)
-    # OPTION(BUILD_EGL "Build OpenGL/EGL" ON)
-    # IF(BUILD_EGL)
+    OPTION(BUILD_EGL "Build OpenGL/EGL" OFF) # [IGE]: Turn off, EGL only run offscreen rendering (no window)
+    IF(BUILD_EGL)
         ADD_DEFINITIONS(-DBT_USE_EGL)
-    # ENDIF(BUILD_EGL)
+    ENDIF(BUILD_EGL)
 ENDIF()
 
 IF(BUILD_BULLET3)

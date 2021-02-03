@@ -13,10 +13,7 @@ uniform mat4 ProjectionMatrix;
 
 out vec4 scale_obuid;
 
-out Fragment
-{
-     vec4 color;
-} fragment;
+out vec4 fragment_color;
 
 vec4 quatMul ( in vec4 q1, in vec4 q2 )
 {
@@ -56,6 +53,6 @@ void main(void)
 	vec4 vertexPos = ProjectionMatrix * ModelViewMatrix *(instance_position+localcoord);
 	scale_obuid = instance_scale_obUid;
 	gl_Position = vertexPos;
-	fragment.color = instance_color;
+	fragment_color = instance_color;
 }
 

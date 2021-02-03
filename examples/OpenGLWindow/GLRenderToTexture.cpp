@@ -16,11 +16,20 @@ GLRenderToTexture::GLRenderToTexture()
 	const GLubyte* ven = glGetString(GL_VENDOR);
 	printf("ven = %s\n", ven);
 
-	if (strncmp((const char*)ven, "Intel", 5) == 0)
+/// [IGE]: fix compare with short vender's name
+	if (ven != NULL && strlen((const char*)ven) >=5 && strncmp((const char*)ven, "Intel", 5) == 0)
 	{
 		printf("Workaround for some crash in the Intel OpenGL driver on Linux/Ubuntu\n");
 		gIntelLinuxglDrawBufferWorkaround = true;
 	}
+/// [/IGE]
+
+/// [IGE]: Fix GLES
+	// Force workaround on OpenGLES devices
+	#ifdef GLAD_GLES2
+		gIntelLinuxglDrawBufferWorkaround = true;
+	#endif
+/// [/IGE]
 #endif  //!defined(_WIN32) && !defined(__APPLE__)
 }
 
@@ -42,12 +51,24 @@ void GLRenderToTexture::init(int width, int height, GLuint textureId, int render
 	{
 		case RENDERTEXTURE_COLOR:
 		{
+/// [IGE]: Fix GLES
+#ifdef GLAD_GLES2
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+#else
 			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureId, 0);
+#endif
+/// [/IGE]
 			break;
 		}
 		case RENDERTEXTURE_DEPTH:
 		{
+/// [IGE]: Fix GLES
+#ifdef GLAD_GLES2
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0);
+#else
 			glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureId, 0);
+#endif
+/// [/IGE]
 			break;
 		}
 		default:

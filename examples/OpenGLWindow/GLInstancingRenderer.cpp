@@ -1270,8 +1270,12 @@ void GLInstancingRenderer::InitShaders()
 		glBindVertexArray(0);
 	}
 
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
 	//glGetIntegerv(GL_ALIASED_LINE_WIDTH_RANGE, range);
-	glGetIntegerv(GL_SMOOTH_LINE_WIDTH_RANGE, lineWidthRange);
+	glGetIntegerv(GL_SMOOTH_LINE_WIDTH_RANGE, lineWidthRange);	
+#endif
+/// [/IGE]
 
 	projectiveTextureInstancingShader = gltLoadShaderPair(projectiveTextureInstancingVertexShader, projectiveTextureInstancingFragmentShader);
 
@@ -1885,7 +1889,12 @@ void GLInstancingRenderer::drawPoints(const float* positions, const float color[
 	glUniformMatrix4fv(lines_ModelViewMatrix, 1, false, &m_data->m_viewMatrix[0]);
 	glUniform4f(lines_colour, color[0], color[1], color[2], color[3]);
 
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
 	glPointSize(pointDrawSize);
+#endif
+/// [/IGE]
+
 	glBindVertexArray(lineVertexArrayObject);
 
 	glBindBuffer(GL_ARRAY_BUFFER, lineVertexBufferObject);
@@ -1913,7 +1922,13 @@ void GLInstancingRenderer::drawPoints(const float* positions, const float color[
 	}
 	
 	glBindVertexArray(0);
+
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
 	glPointSize(1);
+#endif
+/// [/IGE]
+
 	glUseProgram(0);
 }
 
@@ -1937,7 +1952,12 @@ void GLInstancingRenderer::drawLines(const float* positions, const float color[4
 	glUniformMatrix4fv(lines_ModelViewMatrix, 1, false, &m_data->m_viewMatrix[0]);
 	glUniform4f(lines_colour, color[0], color[1], color[2], color[3]);
 
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
 	//	glPointSize(pointDrawSize);
+#endif
+/// [/IGE]
+
 	glBindVertexArray(linesVertexArrayObject);
 
 	b3Assert(glGetError() == GL_NO_ERROR);
@@ -1973,7 +1993,13 @@ void GLInstancingRenderer::drawLines(const float* positions, const float color[4
 	b3Assert(glGetError() == GL_NO_ERROR);
 	glBindVertexArray(0);
 	b3Assert(glGetError() == GL_NO_ERROR);
+
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
 	glPointSize(1);
+#endif
+/// [/IGE]
+
 	b3Assert(glGetError() == GL_NO_ERROR);
 	glUseProgram(0);
 }
@@ -2165,7 +2191,7 @@ void GLInstancingRenderer::renderSceneInternal(int orgRenderMode)
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16,
 					m_data->m_shadowMapWidth, m_data->m_shadowMapHeight,
-							 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+							 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, 0); /// [IGE]: Fix GLES
 				err = glGetError();
 				if (err != GL_NO_ERROR)
 				{
@@ -2200,8 +2226,13 @@ void GLInstancingRenderer::renderSceneInternal(int orgRenderMode)
 		//	return;
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);  // Cull back-facing triangles -> draw only front-facing triangles
+
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
 		glGenerateMipmap(GL_TEXTURE_2D);
 		b3Assert(glGetError() == GL_NO_ERROR);
+#endif
+/// [/IGE]
 	}
 	else
 	{
@@ -2462,12 +2493,19 @@ void GLInstancingRenderer::renderSceneInternal(int orgRenderMode)
 
 						//glUniform1i(uniform_texture_diffusePointSprite, 0);
 						b3Assert(glGetError() == GL_NO_ERROR);
-						glPointSize(20);
 
-#ifndef __APPLE__
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
+						glPointSize(20);
+#endif
+/// [/IGE]
+
+/// [IGE]: fix android compile
+#if !defined(__APPLE__) && !defined(__ANDROID__)
 						glEnable(GL_POINT_SPRITE_ARB);
 //					glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
 #endif
+/// [/IGE]
 
 						glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 						glDrawElementsInstanced(GL_POINTS, indexCount, GL_UNSIGNED_INT, indexOffset, gfxObj->m_numGraphicsInstances);
@@ -2508,7 +2546,11 @@ void GLInstancingRenderer::renderSceneInternal(int orgRenderMode)
 								glUniform3f(regularLightDirIn, gLightDir[0], gLightDir[1], gLightDir[2]);
 
 								glUniform1i(uniform_texture_diffuse, 0);
+						/// [IGE]: fix GLES
+							#ifndef GLAD_GLES2
 								glEnable(GL_MULTISAMPLE);
+							#endif
+						/// [/IGE]
 								if (gfxObj->m_flags & B3_INSTANCE_TRANSPARANCY)
 								{
 									int instanceId = transparentInstances[i].m_instanceId;
@@ -2536,7 +2578,11 @@ void GLInstancingRenderer::renderSceneInternal(int orgRenderMode)
 							{
 								glUseProgram(createShadowMapInstancingShader);
 								glUniformMatrix4fv(createShadow_depthMVP, 1, false, &depthMVP[0][0]);
+						/// [IGE]: fix GLES
+							#ifndef GLAD_GLES2
 								glEnable(GL_MULTISAMPLE);
+							#endif
+						/// [/IGE]
 								glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, indexOffset, gfxObj->m_numGraphicsInstances);
 								break;
 							}
@@ -2595,7 +2641,13 @@ void GLInstancingRenderer::renderSceneInternal(int orgRenderMode)
 								glBindTexture(GL_TEXTURE_2D, m_data->m_shadowTexture);
 
 								glUniform1i(useShadow_shadowMap, 1);
+
+						/// [IGE]: fix GLES
+							#ifndef GLAD_GLES2
 								glEnable(GL_MULTISAMPLE);
+							#endif
+						/// [/IGE]
+
 								//sort transparent objects
 
 								//gfxObj->m_instanceOffset
@@ -2753,7 +2805,12 @@ void GLInstancingRenderer::enableShadowMap()
 void GLInstancingRenderer::clearZBuffer()
 {
 	glClear(GL_DEPTH_BUFFER_BIT);
+
+/// [IGE]: fix GLES
+#ifndef GLAD_GLES2
 	glEnable(GL_MULTISAMPLE);
+#endif
+/// [/IGE]
 }
 
 int GLInstancingRenderer::getMaxShapeCapacity() const

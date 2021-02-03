@@ -15,16 +15,8 @@ uniform mat4 ModelViewMatrix;
 uniform mat4 ProjectionMatrix;
 uniform vec3 lightDirIn;
 
-out Fragment
-{
-     vec4 color;
-} fragment;
-
-out Vert
-{
-	vec2 texcoord;
-} vert;
-
+out vec4 fragment_color;
+out vec2 vert_texcoord;
 
 vec4 quatMul ( in vec4 q1, in vec4 q2 )
 {
@@ -73,7 +65,7 @@ void main(void)
 
 	gl_Position = vertexPos;
 	
-	fragment.color = instance_color;
-	vert.texcoord = uvcoords;
+	fragment_color = instance_color;
+	vert_texcoord = uvcoords;
 }
 

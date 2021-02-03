@@ -3,26 +3,27 @@
 #include "SimpleOpenGL3App.h"
 #include "ShapeData.h"
 
-#ifdef BT_USE_EGL
+/// [IGE]: Fix GLES
+#if defined(B3_USE_GLFW)
+	#include "GLFWOpenGLWindow.h"
+#elif defined(B3_USE_SDL)
+	#include "SDLOpenGLWindow.h"
+#elif defined(BT_USE_EGL)
 	#include "EGLOpenGLWindow.h"
 #else
-	#ifdef B3_USE_GLFW
-		#include "GLFWOpenGLWindow.h"
+	#ifdef __APPLE__
+		#include "MacOpenGLWindow.h"
 	#else
-		#ifdef __APPLE__
-			#include "MacOpenGLWindow.h"
+		#ifdef _WIN32
+			#include "Win32OpenGLWindow.h"
 		#else
-			#ifdef _WIN32
-				#include "Win32OpenGLWindow.h"
-			#else
-				//let's cross the fingers it is Linux/X11
-				#include "X11OpenGLWindow.h"
-				#define BT_USE_X11  // for runtime backend selection, move to build?
-			#endif //_WIN32
-		#endif //__APPLE__
-	#endif //B3_USE_GLFW
-#endif //BT_USE_EGL
-
+			//let's cross the fingers it is Linux/X11
+			#include "X11OpenGLWindow.h"
+			#define BT_USE_X11  // for runtime backend selection, move to build?
+		#endif //_WIN32
+	#endif //__APPLE__
+#endif //B3_USE_GLFW
+/// [/IGE]
 
 #include <stdio.h>
 
@@ -133,11 +134,17 @@ static GLuint BindFont(const CTexFont* _Font)
 	GLuint TexID = 0;
 	glGenTextures(1, &TexID);
 	glBindTexture(GL_TEXTURE_2D, TexID);
+
+/// [IGE]: Fix GLES
+#ifndef GLAD_GLES2
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
 	glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+#endif
+/// [/IGE]
+
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, _Font->m_TexWidth, _Font->m_TexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, _Font->m_TexBytes);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
