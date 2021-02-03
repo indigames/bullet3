@@ -2502,8 +2502,8 @@ void GLInstancingRenderer::renderSceneInternal(int orgRenderMode)
 
 /// [IGE]: fix android compile
 #if !defined(__APPLE__) && !defined(__ANDROID__)
-						glEnable(GL_POINT_SPRITE_ARB);
-//					glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+//						glEnable(GL_POINT_SPRITE_ARB);
+//						glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
 #endif
 /// [/IGE]
 
