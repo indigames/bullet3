@@ -7,20 +7,29 @@
 #include "../OpenGLWindow/SimpleOpenGL2App.h"
 #endif //NO_OPENGL3
 #include "../CommonInterfaces/CommonRenderInterface.h"
-#ifdef __APPLE__
-#include "../OpenGLWindow/MacOpenGLWindow.h"
+
+/// [IGE]: Fix GLES
+#if defined(B3_USE_GLFW)
+	#include "../OpenGLWindow/GLFWOpenGLWindow.h"
+#elif defined(B3_USE_SDL)
+	#include "../OpenGLWindow/SDLOpenGLWindow.h"
+#elif defined(BT_USE_EGL)
+	#include "../OpenGLWindow/EGLOpenGLWindow.h"
 #else
-#ifdef _WIN32
-#include "../OpenGLWindow/Win32OpenGLWindow.h"
-#else
-//let's cross the fingers it is Linux/X11
-#ifdef BT_USE_EGL
-#include "../OpenGLWindow/EGLOpenGLWindow.h"
-#else
-#include "../OpenGLWindow/X11OpenGLWindow.h"
-#endif  //BT_USE_EGL
-#endif  //_WIN32
-#endif  //__APPLE__
+	#ifdef __APPLE__
+		#include "../OpenGLWindow/MacOpenGLWindow.h"
+	#else
+		#ifdef _WIN32
+			#include "../OpenGLWindow/Win32OpenGLWindow.h"
+		#else
+			//let's cross the fingers it is Linux/X11
+			#include "../OpenGLWindow/X11OpenGLWindow.h"
+			#define BT_USE_X11  // for runtime backend selection, move to build?
+		#endif //_WIN32
+	#endif //__APPLE__
+#endif //B3_USE_GLFW
+/// [/IGE]
+
 #include "../ThirdPartyLibs/Gwen/Renderers/OpenGL_DebugFont.h"
 #include "LinearMath/btThreads.h"
 #include "Bullet3Common/b3Vector3.h"
