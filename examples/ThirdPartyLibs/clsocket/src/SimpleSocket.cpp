@@ -42,6 +42,10 @@
  *----------------------------------------------------------------------------*/
 #include "SimpleSocket.h"
 
+#ifdef WIN32
+    typedef int socklen_t;
+#endif
+
 CSimpleSocket::CSimpleSocket(CSocketType nType) : m_socket(INVALID_SOCKET),
 												  m_socketErrno(CSimpleSocket::SocketInvalidSocket),
 												  m_pBuffer(NULL),
@@ -756,7 +760,7 @@ int32 CSimpleSocket::Receive(int32 nMaxBytes, uint8 *pBuffer)
 		}
 		case CSimpleSocket::SocketTypeUdp:
 		{
-			uint32 srcSize;
+			socklen_t srcSize;
 
 			srcSize = sizeof(struct sockaddr_in);
 

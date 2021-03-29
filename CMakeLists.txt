@@ -7,6 +7,13 @@ SET(MSVC_INCREMENTAL_DEFAULT ON)
 PROJECT(BULLET_PHYSICS)
 FILE (STRINGS "VERSION" BULLET_VERSION)
 
+# [IGE]: try include conan build config
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+endif()
+# [/IGE]
+
 IF(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)
    if(POLICY CMP0042)
@@ -350,8 +357,6 @@ IF(BUILD_PYBULLET)
     # # the following can result in fatal error if you don't have the right python configuration
     # FIND_PACKAGE(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
 
-    file(TO_CMAKE_PATH $ENV{IGE_LIBS} IGE_LIBS)
-
     if(DEFINED ANDROID_PLATFORM)
         if(ANDROID_ABI STREQUAL "armeabi-v7a")
             add_compile_options(-marm -march=armv7-a -mtune=cortex-a15 -mfpu=neon-fp16 -mfloat-abi=softfp)
@@ -385,25 +390,8 @@ IF(BUILD_PYBULLET)
 # [/IGE]
 
 
-    set (PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Include")
-    if (MSVC)
-        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/PC")
-    elseif (OSX)
-        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Mac")
-    elseif (ANDROID)
-        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/Android")
-    elseif (IOS)
-        list(APPEND PYTHON_INCLUDE_DIRS "${IGE_LIBS}/Python/IOS")
-    endif ()
-
-    set (PYTHON_NUMPY_INCLUDE_DIR 
-            "${IGE_LIBS}/numpy/include"
-            "${IGE_LIBS}/numpy/include/numpy"
-            "${IGE_LIBS}/numpy/include/numpy/core"
-            "${IGE_LIBS}/numpy/include/numpy/core/include"
-            "${IGE_LIBS}/numpy/include/numpy/core/include/numpy"
-            "${IGE_LIBS}/numpy/include/numpy/core/include/numpy/random"
-        )
+    set (PYTHON_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS})
+    set (PYTHON_NUMPY_INCLUDE_DIR ${CONAN_INCLUDE_DIRS})
     #[/IGE]
 ENDIF(BUILD_PYBULLET)
 

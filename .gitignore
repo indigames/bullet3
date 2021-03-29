@@ -36,3 +36,6 @@ CTestTestFile.cmake
 
 # vim temp files
 *.swp
+/_ige_build
+/_ige_release
+/conanfile.py
