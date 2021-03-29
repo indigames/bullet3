@@ -43,11 +43,11 @@ if exist "%~dp0..\project.conf" (
 echo !PROJECT_NAME!_!PROJECT_VER!
 
 cd %CALL_DIR%
-REM call !IGE_BUILDER!\build-lib.bat . !PROJECT_NAME! !PROJECT_VER! windows x86
-REM if %ERRORLEVEL% NEQ 0 goto ERROR
+call !IGE_BUILDER!\build-lib.bat . !PROJECT_NAME! !PROJECT_VER! windows x86
+if %ERRORLEVEL% NEQ 0 goto ERROR
 
-REM call !IGE_BUILDER!\build-lib.bat . !PROJECT_NAME! !PROJECT_VER! windows x86_64
-REM if %ERRORLEVEL% NEQ 0 goto ERROR
+call !IGE_BUILDER!\build-lib.bat . !PROJECT_NAME! !PROJECT_VER! windows x86_64
+if %ERRORLEVEL% NEQ 0 goto ERROR
 
 call !IGE_BUILDER!\build-lib.bat . !PROJECT_NAME! !PROJECT_VER! android x86
 if %ERRORLEVEL% NEQ 0 goto ERROR
