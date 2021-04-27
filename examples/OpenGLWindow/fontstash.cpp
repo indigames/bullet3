@@ -37,6 +37,8 @@
 #define STBTT_free(x, u) free(x)
 #include "stb_image/stb_truetype.h"
 
+#include <assert.h> // [IGE: Add]
+
 #define HASH_LUT_SIZE 256
 
 #define TTFONT_FILE 1
