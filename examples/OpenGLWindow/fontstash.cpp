@@ -17,7 +17,7 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-#define STB_TRUETYPE_IMPLEMENTATION
+// #define STB_TRUETYPE_IMPLEMENTATION // [IGE: Rem]
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,7 +32,7 @@
 #define BORDER_Y_BOTTOM 2
 #define ADDITIONAL_HEIGHT 2
 
-#define STB_TRUETYPE_IMPLEMENTATION
+// #define STB_TRUETYPE_IMPLEMENTATION // [IGE: Rem]
 #define STBTT_malloc(x, u) malloc(x)
 #define STBTT_free(x, u) free(x)
 #include "stb_image/stb_truetype.h"
