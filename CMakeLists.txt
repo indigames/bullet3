@@ -7,10 +7,38 @@ SET(MSVC_INCREMENTAL_DEFAULT ON)
 PROJECT(BULLET_PHYSICS)
 FILE (STRINGS "VERSION" BULLET_VERSION)
 
-# [IGE]: try include conan build config
-if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    conan_basic_setup()
+
+# [IGE]: tweaks for platforms
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+# Modules and install path (required by conan)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})
+set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR} ${CMAKE_PREFIX_PATH})
+
+if(DEFINED ANDROID_PLATFORM)
+    set (ANDROID 1)
+    if(ANDROID_ABI STREQUAL "armeabi-v7a")
+        add_compile_options(-marm -march=armv7-a -mtune=cortex-a15 -mfpu=neon-fp16 -mfloat-abi=softfp)
+    elseif(ANDROID_ABI STREQUAL "x86")
+        add_compile_options(-march=atom -m32 -msse -msse2 -msse3 -mssse3 -mfpmath=sse -mstackrealign)
+    elseif(ANDROID_ABI STREQUAL "arm64-v8a")
+        add_compile_options(-march=armv8-a+simd+sve -mtune=cortex-a53 -D__ARM_NEON -D__ARM_NEON__)
+    elseif(ANDROID_ABI STREQUAL "x86_64")
+        add_compile_options(-march=atom -m64 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mfpmath=sse)
+    endif()
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        add_compile_options(-g0 -Ofast)
+    else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(-Og)
+    endif()
+elseif(MSVC)
+    add_compile_options(/MP)
+elseif(IOS)
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        add_compile_options(-g0 -Ofast)
+    endif()
 endif()
 # [/IGE]
 
@@ -357,30 +385,6 @@ IF(BUILD_PYBULLET)
     # # the following can result in fatal error if you don't have the right python configuration
     # FIND_PACKAGE(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
 
-    if(DEFINED ANDROID_PLATFORM)
-        if(ANDROID_ABI STREQUAL "armeabi-v7a")
-            add_compile_options(-marm -march=armv7-a -mtune=cortex-a15 -mfpu=neon-fp16 -mfloat-abi=softfp)
-        elseif(ANDROID_ABI STREQUAL "x86")
-            add_compile_options(-march=atom -m32 -msse -msse2 -msse3 -mssse3 -mfpmath=sse -mstackrealign)
-        elseif(ANDROID_ABI STREQUAL "arm64-v8a")
-            add_compile_options(-march=armv8-a+simd+sve -mtune=cortex-a53 -D__ARM_NEON -D__ARM_NEON__)
-        elseif(ANDROID_ABI STREQUAL "x86_64")
-            add_compile_options(-march=atom -m64 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mfpmath=sse)
-        endif()
-        if(CMAKE_BUILD_TYPE STREQUAL "Release")
-            add_compile_options(-g0 -Ofast)
-        else(CMAKE_BUILD_TYPE STREQUAL "Debug")
-            add_compile_options(-Og)
-        endif()
-    elseif(MSVC)
-        add_compile_options(/MP)
-    elseif(IOS)
-        ADD_DEFINITIONS(-DIOS=1)
-        if(CMAKE_BUILD_TYPE STREQUAL "Release")
-            add_compile_options(-g0 -Ofast)
-        endif()
-    endif()
-
 # [IGE]: Add support for OpenGLES 3.0
     if(ANDROID OR IOS)
         ADD_DEFINITIONS(-DGLAD_GLES2 -DGL_ES_VERSION_3_0)
@@ -390,8 +394,10 @@ IF(BUILD_PYBULLET)
 # [/IGE]
 
 
-    set (PYTHON_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS})
-    set (PYTHON_NUMPY_INCLUDE_DIR ${CONAN_INCLUDE_DIRS})
+    find_package(Python REQUIRED)
+    find_package(numpy REQUIRED)
+    set (PYTHON_INCLUDE_DIRS ${Python_INCLUDE_DIRS})
+    set (PYTHON_NUMPY_INCLUDE_DIR ${numpy_INCLUDE_DIRS})
     #[/IGE]
 ENDIF(BUILD_PYBULLET)
 
@@ -513,7 +519,7 @@ ELSE()
         OPTION(INSTALL_LIBS "Set when you want to install libraries" ON)
     ELSE()
 #by default, don't enable the 'INSTALL' option for Xcode and MSVC projectfiles
-        OPTION(INSTALL_LIBS "Set when you want to install libraries" OFF)
+        OPTION(INSTALL_LIBS "Set when you want to install libraries" ON) # [IGE]: use install target for conan package
     ENDIF()
 ENDIF()
 
@@ -529,7 +535,7 @@ IF(INSTALL_LIBS)
     SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
     SET (LIB_DESTINATION "lib${LIB_SUFFIX}" CACHE STRING "Library directory name")
     ## the following are directories where stuff will be installed to
-    SET(INCLUDE_INSTALL_DIR "include/bullet/" CACHE PATH "The subdirectory to the header prefix")
+    SET(INCLUDE_INSTALL_DIR "include" CACHE PATH "The subdirectory to the header prefix") # [IGE]: changed from include/bullet/
     SET(PKGCONFIG_INSTALL_PREFIX "lib${LIB_SUFFIX}/pkgconfig/" CACHE STRING "Base directory for pkgconfig files")
     IF(NOT MSVC)
       CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/bullet.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/bullet.pc @ONLY)

@@ -358,6 +358,7 @@ ENDIF(WIN32)
 
 
 ADD_LIBRARY(pybullet STATIC ${pybullet_SRCS}) #[IGE]: force static
+INSTALL(TARGETS pybullet DESTINATION lib) # [IGE]: conan install package
 
 #[IGE]: rem below
 # SET_TARGET_PROPERTIES(pybullet PROPERTIES PREFIX "")
