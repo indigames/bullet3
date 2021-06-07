@@ -52,28 +52,28 @@ class IgeConan(ConanFile):
             cmake_cmd += f' -G Xcode -DOSX=1 -DCMAKE_BUILD_TYPE=Release'
         else:
             print(f'Configuration not supported: platform = {self.settings.os}, arch = {self.settings.arch}')
-            os.exit(1)
+            exit(1)
 
         error_code = self.run(cmake_cmd, ignore_errors=True)
         if(error_code != 0):
             print(f'CMake generation failed, error code: {error_code}')
-            os.exit(1)
+            exit(1)
 
     def _buildCMakeProject(self):
         error_code = self.run('cmake --build . --config Release --target install', ignore_errors=True)
         if(error_code != 0):
             print(f'CMake build failed, error code: {error_code}')
-            os.exit(1)
+            exit(1)
 
     def _upload(self):
         os.chdir(Path(self.build_folder).parent.absolute())
         error_code = self.run(f'conan export-pkg . {self.name}/{self.version}@ige/test --profile=cmake/profiles/{str(self.settings.os).lower()}_{str(self.settings.arch).lower()} --force', ignore_errors=True)
         if(error_code != 0):
             print(f'Conan export failed, error code: {error_code}')
-            os.exit(1)
+            exit(1)
 
         error_code =self.run(f'conan upload {self.name}/{self.version}@ige/test --all --remote ige-center --force --confirm', ignore_errors=True)
         if(error_code != 0):
             print(f'Conan upload failed, error code: {error_code}')
-            os.exit(1)
+            exit(1)
 
