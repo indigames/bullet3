@@ -27,7 +27,7 @@ class IgeConan(ConanFile):
     def build(self):
         self._generateCMakeProject()
         self._buildCMakeProject()
-        self._upload()
+        self._package()
 
     def package(self):
         self.copy('*', src='build/install')
@@ -65,15 +65,10 @@ class IgeConan(ConanFile):
             print(f'CMake build failed, error code: {error_code}')
             exit(1)
 
-    def _upload(self):
+    def _package(self):
         os.chdir(Path(self.build_folder).parent.absolute())
         error_code = self.run(f'conan export-pkg . {self.name}/{self.version}@ige/test --profile=cmake/profiles/{str(self.settings.os).lower()}_{str(self.settings.arch).lower()} --force', ignore_errors=True)
         if(error_code != 0):
             print(f'Conan export failed, error code: {error_code}')
-            exit(1)
-
-        error_code =self.run(f'conan upload {self.name}/{self.version}@ige/test --all --remote ige-center --force --confirm', ignore_errors=True)
-        if(error_code != 0):
-            print(f'Conan upload failed, error code: {error_code}')
             exit(1)
 

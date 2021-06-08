@@ -1,6 +1,7 @@
 import os
 import shutil
 import platform
+from conanfile import IgeConan
 
 def setEnv(name, value):
     if platform.system() == 'Windows':
@@ -20,11 +21,19 @@ def safeRemove(rm_path):
 
 def build(platform, arch):
     safeRemove('build')
-    os.mkdir('build')
+    try:
+        os.mkdir('build')
+    except:
+        pass
     os.chdir('build')
-    os.system(f'conan install --update .. --profile ../cmake/profiles/{platform}_{arch}')
+    ret_code = os.system(f'conan install --update .. --profile ../cmake/profiles/{platform}_{arch}')
+    if ret_code != 0:
+        exit(1)
+
     os.chdir('..')
-    os.system('conan build . --build-folder build')
+    ret_code = os.system('conan build . --build-folder build')
+    if ret_code != 0:
+        exit(1)
 
 def main():
     setEnv('CONAN_REVISIONS_ENABLED', '1')
@@ -38,6 +47,8 @@ def main():
     elif platform.system() == 'Darwin':
         build('macos', 'x86_64')
         build('ios', 'armv8')
+    ret_code = os.system(f'conan upload {IgeConan.name}/{IgeConan.version}@ige/test --all --remote ige-center --force --confirm')
+    exit(ret_code)
 
 if __name__ == "__main__":
     main()
